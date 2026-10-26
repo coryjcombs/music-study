@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { player } from './player'
+import { player, type TransportState } from './player'
 
-/** Current playback step index of player.playSteps, or null when idle. */
-export function usePlaybackStep(): number | null {
-  const [step, setStep] = useState<number | null>(null)
-  useEffect(() => player.onStep(setStep), [])
-  return step
+/** Transport status and the global step index now sounding (null when idle). */
+export function useTransport(): TransportState {
+  const [t, setT] = useState<TransportState>(player.getTransport())
+  useEffect(() => player.onTransport(setT), [])
+  return t
 }

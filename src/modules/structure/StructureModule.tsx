@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { player } from '../../audio/player'
-import { usePlaybackStep } from '../../audio/useStep'
+import { useTransport } from '../../audio/useStep'
 import { BarGrid } from '../../app/components/BarGrid'
 import { SONG_FORMS, type FormSection, type SongForm } from '../../content/forms'
 import { CIRCLE_MAJOR, CIRCLE_MINOR, closeVoicing, realizeBars, type RealizedChord } from '../../theory'
@@ -40,7 +40,8 @@ export function StructureModule() {
   const [tonic, setTonic] = useState<string | null>(null)
   const [bpm, setBpm] = useState<number | null>(null)
   const [open, setOpen] = useState<number | null>(0)
-  const step = usePlaybackStep()
+  const transport = useTransport()
+  const step = transport.step
 
   useEffect(() => () => player.cancelSequence(), [])
 
@@ -52,9 +53,10 @@ export function StructureModule() {
 
   const totalBars = timeline.reduce((n, t) => n + t.bars.length, 0)
 
-  const play = (from = 0) => {
-    const steps = timeline.slice(from).flatMap((t) => t.bars.flatMap((bar) => bar.map((c) => ({ midis: closeVoicing(c.symbol, 3), beats: 4 / bar.length }))))
-    void player.playSteps(steps, tempo, false)
+  // The whole form is one sequence; playing from a section starts at that section's first chord.
+  const play = (fromItem = 0) => {
+    const steps = timeline.flatMap((t) => t.bars.flatMap((bar) => bar.map((c) => ({ midis: closeVoicing(c.symbol, 3), beats: 4 / bar.length }))))
+    void player.playSteps(steps, tempo, false, 0, timeline[fromItem]?.offset ?? 0)
   }
 
   const tonics = form.mode === 'major' ? CIRCLE_MAJOR : CIRCLE_MINOR
@@ -80,8 +82,11 @@ export function StructureModule() {
           <input type="number" min={40} max={240} value={tempo} onChange={(e) => setBpm(Number(e.target.value) || 100)} style={{ width: 70 }} />
         </label>
         <div className="seg-group">
-          <button className="seg primary" onClick={() => play(0)}>Play all</button>
-          <button className="seg" onClick={() => player.stopAll()}>Stop</button>
+          <button className="seg primary" onClick={() => play(open ?? 0)}>{open != null && open > 0 ? `Play from ${timeline[open]?.section.name}` : 'Play all'}</button>
+          <button className="seg" onClick={() => player.togglePause()} disabled={transport.status === 'stopped'}>
+            {transport.status === 'paused' ? 'Resume' : 'Pause'}
+          </button>
+          <button className="seg" onClick={() => player.stopAll()} disabled={transport.status === 'stopped'}>Stop</button>
         </div>
       </div>
       <p className="muted" style={{ marginTop: 0 }}>{form.description} {totalBars} bars.</p>
@@ -91,7 +96,7 @@ export function StructureModule() {
         {timeline.map((t, i) => (
           <div
             key={i}
-            className={`timeline-block ${open === i ? 'open' : ''} ${activeItem === i ? 'playing' : ''}`}
+            className={`timeline-block ${open === i ? 'open' : ''} ${activeItem === i ? 'playing' : ''} ${transport.status === 'paused' && activeItem === i ? 'paused' : ''}`}
             style={{ flex: t.bars.length, background: colorFor(t.section.name) }}
             onClick={() => setOpen(open === i ? null : i)}
             title={`${t.section.name}: bars ${t.barStart + 1}–${t.barStart + t.bars.length}`}
@@ -129,7 +134,7 @@ export function StructureModule() {
           </div>
         ))}
       </div>
-      <p className="hint">Each block is a section; its width is its length in bars. Click a block to open it, or any chord to hear it. The harmonic rhythm (how many chords per bar) is visible in the grid.</p>
+      <p className="hint">Each block is a section; its width is its length in bars. Click a block to select it, then Play from here (or the main Play button) starts there and continues to the end. Pause holds the current chord; Resume continues from it. Click any chord to hear it on its own.</p>
     </div>
   )
 }

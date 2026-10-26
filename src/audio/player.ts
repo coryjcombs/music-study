@@ -127,61 +127,110 @@ class Player {
     this.inst?.stop()
   }
 
+  // ---- transport: timed chord sequences with pause and resume ----
   private timers: ReturnType<typeof setTimeout>[] = []
-  private sequenceListeners = new Set<(step: number | null) => void>()
+  private sequenceListeners = new Set<(t: TransportState) => void>()
+  private transport: TransportState = { status: 'stopped', step: null }
+  private sequence: { steps: Step[]; bpm: number; loop: boolean; offset: number } | null = null
 
-  /** Subscribe to progression playback position (chord index, or null when stopped). */
-  onStep(fn: (step: number | null) => void) {
+  /** Subscribe to transport changes: status and the global step index now sounding. */
+  onTransport(fn: (t: TransportState) => void) {
     this.sequenceListeners.add(fn)
     return () => {
       this.sequenceListeners.delete(fn)
     }
   }
 
-  private emitStep(step: number | null) {
-    this.sequenceListeners.forEach((fn) => fn(step))
+  getTransport() {
+    return this.transport
+  }
+
+  private setTransport(t: TransportState) {
+    this.transport = t
+    this.sequenceListeners.forEach((fn) => fn(t))
+  }
+
+  private clearTimers() {
+    this.timers.forEach(clearTimeout)
+    this.timers = []
   }
 
   cancelSequence() {
-    this.timers.forEach(clearTimeout)
-    this.timers = []
-    this.emitStep(null)
+    this.clearTimers()
+    this.sequence = null
+    this.setTransport({ status: 'stopped', step: null })
   }
 
   /**
    * Play a sequence of chords in time. Each step has the midis to strum and a
-   * duration in beats. Timing uses JS timers (good enough for study tempos) so
-   * playback can be cancelled cleanly. Loops when `loop` is true.
+   * duration in beats. `offset` is added to the emitted step index so views that
+   * show a larger structure can highlight the right chord. `from` is the local
+   * index to start at. Timing uses JS timers (good enough for study tempos) so
+   * playback can be paused and cancelled cleanly.
    */
-  async playSteps(steps: { midis: Midi[]; beats: number }[], bpm: number, loop = false) {
+  async playSteps(steps: Step[], bpm: number, loop = false, offset = 0, from = 0) {
     await this.ensureReady()
-    this.cancelSequence()
-    const beat = 60 / bpm
-    const total = steps.reduce((n, s) => n + s.beats, 0) * beat
-    const schedule = (offset: number) => {
-      let t = offset
-      steps.forEach((s, i) => {
-        const dur = s.beats * beat
-        this.timers.push(setTimeout(() => {
-          this.emitStep(i)
-          const now = this.now()
-          s.midis.forEach((m, k) => this.inst?.start({ note: m, velocity: 80, duration: dur * 0.95, time: now + k * 0.02 }))
-        }, t * 1000))
-        t += dur
-      })
-    }
-    schedule(0)
-    if (loop) {
-      const again = () => {
-        this.timers = []
-        schedule(0)
-        this.timers.push(setTimeout(again, total * 1000))
-      }
-      this.timers.push(setTimeout(again, total * 1000))
-    } else {
-      this.timers.push(setTimeout(() => this.emitStep(null), total * 1000))
-    }
+    this.clearTimers()
+    this.inst?.stop()
+    this.sequence = { steps, bpm, loop, offset }
+    this.scheduleFrom(from)
   }
+
+  private scheduleFrom(from: number) {
+    const seq = this.sequence
+    if (!seq) return
+    const beat = 60 / seq.bpm
+    let t = 0
+    for (let i = from; i < seq.steps.length; i++) {
+      const s = seq.steps[i]
+      const dur = s.beats * beat
+      this.timers.push(setTimeout(() => {
+        this.setTransport({ status: 'playing', step: seq.offset + i })
+        const now = this.now()
+        s.midis.forEach((m, k) => this.inst?.start({ note: m, velocity: 80, duration: dur * 0.95, time: now + k * 0.02 }))
+      }, t * 1000))
+      t += dur
+    }
+    this.timers.push(setTimeout(() => {
+      if (seq.loop) {
+        this.timers = []
+        this.scheduleFrom(0)
+      } else {
+        this.sequence = null
+        this.setTransport({ status: 'stopped', step: null })
+      }
+    }, t * 1000))
+  }
+
+  /** Pause at the current chord. Resume continues from that chord. */
+  pause() {
+    if (this.transport.status !== 'playing' || !this.sequence) return
+    this.clearTimers()
+    this.inst?.stop()
+    this.setTransport({ status: 'paused', step: this.transport.step })
+  }
+
+  resume() {
+    if (this.transport.status !== 'paused' || !this.sequence) return
+    const local = (this.transport.step ?? this.sequence.offset) - this.sequence.offset
+    this.scheduleFrom(Math.max(0, local))
+  }
+
+  togglePause() {
+    if (this.transport.status === 'playing') this.pause()
+    else if (this.transport.status === 'paused') this.resume()
+  }
+}
+
+export interface Step {
+  midis: Midi[]
+  beats: number
+}
+
+export interface TransportState {
+  status: 'stopped' | 'playing' | 'paused'
+  /** Global step index (sequence offset + local index) now sounding, or null. */
+  step: number | null
 }
 
 export const player = new Player()

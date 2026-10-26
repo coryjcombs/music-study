@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { player } from '../../audio/player'
-import { usePlaybackStep } from '../../audio/useStep'
+import { useTransport } from '../../audio/useStep'
 import { BarGrid } from '../../app/components/BarGrid'
 import { navigate, parseHash } from '../../app/hashState'
 import { DEVICES, deviceById } from '../../content/devices'
@@ -16,7 +16,8 @@ export function ProgressionsModule() {
   const [tonic, setTonic] = useState<string | null>(null)
   const [bpm, setBpm] = useState<number | null>(null)
   const [loop, setLoop] = useState(true)
-  const step = usePlaybackStep()
+  const transport = useTransport()
+  const step = transport.step
 
   useEffect(() => {
     const onHash = () => {
@@ -116,7 +117,10 @@ export function ProgressionsModule() {
           </label>
           <div className="seg-group">
             <button className="seg primary" onClick={play}>Play</button>
-            <button className="seg" onClick={() => player.stopAll()}>Stop</button>
+            <button className="seg" onClick={() => player.togglePause()} disabled={transport.status === 'stopped'}>
+              {transport.status === 'paused' ? 'Resume' : 'Pause'}
+            </button>
+            <button className="seg" onClick={() => player.stopAll()} disabled={transport.status === 'stopped'}>Stop</button>
           </div>
         </div>
 
