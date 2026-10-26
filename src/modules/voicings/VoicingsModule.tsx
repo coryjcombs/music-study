@@ -6,7 +6,7 @@ import { parseHash } from '../../app/hashState'
 import type { ModuleProps } from '../../app/modules'
 import {
   LABEL_DESCRIPTIONS, ROOT_CHOICES, analyzeVoicing, fretboardGrid, keysContaining, parseShape,
-  shapeMidis, shapeToString, tuningById, type Shape,
+  shapeMidis, shapeToString, tuningById, type LabeledPosition, type Shape,
 } from '../../theory'
 import { Fretboard } from '../fretboard/Fretboard'
 
@@ -57,11 +57,13 @@ export function VoicingsModule({ settings }: ModuleProps) {
     setShape(safeParse(t))
   }
 
-  const toggleFret = (string: number, fret: number) => {
+  const toggleFret = (p: LabeledPosition) => {
     const next = [...shape]
-    next[string] = next[string] === fret ? null : fret
+    const muting = next[p.string] === p.fret
+    next[p.string] = muting ? null : p.fret
     setShape(next)
     setText(shapeToString(next))
+    if (!muting) void player.playNote(p.midi)
   }
 
   const strum = () => void player.strum(shapeMidis(tuning, shape))
@@ -101,6 +103,7 @@ export function VoicingsModule({ settings }: ModuleProps) {
             stringNames={tuning.strings.map((s) => s.replace(/\d+$/, ''))}
             title={best ? best.symbol : analysis.notes.length ? '?' : ''}
             subtitle={best ? best.name : undefined}
+            onClick={analysis.notes.length ? strum : undefined}
           />
           <div className="analysis-text">
             {best ? (
@@ -149,12 +152,12 @@ export function VoicingsModule({ settings }: ModuleProps) {
 
       <div className="panel">
         <p className="hint" style={{ marginTop: 0, marginBottom: 10 }}>
-          Click a fret to set that string; click it again to mute. Faint notes show where the chord's other tones live.
+          Click a fret to set that string and hear the note; click it again to mute. Click the chord chart to strum. Faint notes show where the chord's other tones live.
         </p>
         <Fretboard
           tuning={tuning} grid={grid} labelMode={analysis.root ? 'chord' : 'names'}
           dimOthers={!!best} leftHanded={settings.leftHanded}
-          onClick={(p) => toggleFret(p.string, p.fret)}
+          onClick={toggleFret}
           emphasized={played}
         />
       </div>
