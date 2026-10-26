@@ -118,3 +118,53 @@ code { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-siz
 .chord-table th { font-weight: 600; color: var(--accent); font-size: 13px; padding: 0 4px; }
 .chord-btn { width: 100%; min-width: 64px; padding: 6px 4px; font-size: 13px; }
 .chord-btn:hover { background: var(--third); color: #111; border-color: var(--third); }
+
+/* ---- catalog layouts (progressions, devices) ---- */
+.catalog-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 1000px) { .catalog-layout { grid-template-columns: 320px minmax(0, 1fr); } }
+.catalog-list { padding: 12px; align-self: start; }
+.entry-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; max-height: 70vh; overflow-y: auto; }
+.entry-list li { padding: 8px 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
+.entry-list li:hover { background: var(--panel-2); }
+.entry-list li.active { background: var(--panel-2); border-color: var(--accent); }
+.entry-name { font-weight: 600; font-size: 14px; }
+.entry-sub { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prose { max-width: 70ch; line-height: 1.55; margin: 8px 0; }
+.examples { margin: 4px 0 0; padding-left: 18px; line-height: 1.6; }
+.link-chip { text-decoration: none; color: var(--text); }
+.link-chip:hover { border-color: var(--accent); }
+
+/* ---- bar grid ---- */
+.bar-grid { display: grid; gap: 8px; margin: 12px 0; }
+.bar { display: flex; gap: 4px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 6px; min-height: 64px; }
+.bar-grid.compact .bar { min-height: 48px; padding: 4px; }
+.chord-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 6px; border: 2px solid transparent; min-width: 0; }
+.chord-cell.borrowed { border-color: color-mix(in srgb, var(--ext) 60%, transparent); }
+.chord-cell.active { background: var(--accent); }
+.chord-cell.active .chord-cell-btn, .chord-cell.active .chord-cell-btn .numeral { color: #111; }
+.chord-cell-btn { background: none; border: none; padding: 4px 2px; display: flex; flex-direction: column; align-items: center; gap: 1px; width: 100%; }
+.chord-cell-btn:hover { border: none; }
+.chord-cell-btn:hover .symbol { color: var(--accent); }
+.chord-cell-btn .numeral { font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+.bar-grid.compact .chord-cell-btn .numeral { font-size: 13px; }
+.chord-cell-btn .symbol { font-size: 12px; color: var(--text); }
+.tiny-link { font-size: 10px; color: var(--muted); text-decoration: none; }
+.tiny-link:hover { color: var(--accent); }
+
+/* ---- structure ---- */
+.timeline { display: flex; gap: 3px; margin-top: 8px; height: 56px; }
+.timeline-block { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; color: #111; min-width: 28px; opacity: 0.75; border: 2px solid transparent; transition: opacity 0.15s; }
+.timeline-block:hover, .timeline-block.open { opacity: 1; }
+.timeline-block.open { border-color: #fff; }
+.timeline-block.playing { outline: 3px solid var(--accent); outline-offset: 1px; opacity: 1; }
+.timeline-name { font-weight: 700; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.timeline-bars { font-size: 10px; opacity: 0.8; }
+.timeline-ruler { display: flex; gap: 3px; font-size: 10px; color: var(--muted); margin: 2px 0 10px; }
+.timeline-ruler span { min-width: 28px; }
+.section-detail { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-top: 6px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; }
+.form-overview { display: flex; flex-direction: column; gap: 4px; }
+.form-row { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 10px; align-items: start; }
+.form-row-label { font-size: 12px; font-weight: 600; border-left: 3px solid; padding-left: 8px; margin-top: 16px; }
+.form-row .bar-grid { margin: 6px 0; }

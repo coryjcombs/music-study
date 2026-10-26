@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { player } from '../../audio/player'
 import { ChordDiagram } from '../../app/components/ChordDiagram'
 import { colorFor } from '../../app/components/colors'
-import { navigate } from '../../app/hashState'
+import { navigate, parseHash } from '../../app/hashState'
 import type { ModuleProps } from '../../app/modules'
 import { CHORD_SHAPES, SHAPE_TAGS, type ChordShape } from '../../content/shapes'
 import {
@@ -18,9 +18,21 @@ interface Card {
 
 export function ShapesModule({ settings }: ModuleProps) {
   const tuning = tuningById(settings.tuningId)
-  const [root, setRoot] = useState('C')
-  const [suffix, setSuffix] = useState<string>('any')
+  const initial = parseHash().params
+  const [root, setRoot] = useState(initial.get('root') ?? 'C')
+  const [suffix, setSuffix] = useState<string>(initial.get('suffix') ?? 'any')
   const [tag, setTag] = useState<string>('any')
+
+  useEffect(() => {
+    const onHash = () => {
+      const p = parseHash()
+      if (p.module !== 'shapes') return
+      if (p.params.get('root')) setRoot(p.params.get('root')!)
+      if (p.params.has('suffix')) setSuffix(p.params.get('suffix')!)
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   const cards = useMemo<Card[]>(() => {
     const out: Card[] = []

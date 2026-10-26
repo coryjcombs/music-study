@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { player } from '../../audio/player'
-import type { ModuleProps } from '../../app/modules'
 import {
   CIRCLE_ALT, CIRCLE_MAJOR, CIRCLE_MINOR, closeVoicing, keyInfo, keysContaining, scaleRun, type Mode,
 } from '../../theory'
@@ -15,7 +14,7 @@ function polar(i: number, r: number) {
   return { x: CX + r * Math.cos(a), y: CY + r * Math.sin(a) }
 }
 
-export function CircleModule({ settings: _settings }: ModuleProps) {
+export function CircleModule() {
   const [index, setIndex] = useState(0)
   const [mode, setMode] = useState<Mode>('major')
   const [hoverChord, setHoverChord] = useState<string | null>(null)

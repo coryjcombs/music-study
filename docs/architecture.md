@@ -27,7 +27,7 @@ single self-contained HTML file with `npm run build:single` and open `dist/index
 
 1. Scaffold, theory engine with tests, audio adapter, fretboard viewer. **(done)**
 2. Voicing analyzer, chord shape library, circle of fifths. **(done)**
-3. Progression catalog and device library with playback and transposition, song structure view.
+3. Progression catalog and device library with playback and transposition, song structure view. **(done)**
 4. Builder and analyzer, practice log, notebook, ear training.
 
 ## Content: chord shapes
@@ -37,3 +37,22 @@ tags for its family (open, barre, shell, drop 2, drop 3, extended, altered). Sha
 open strings are transposed to other roots in the UI. `src/content/__tests__/shapes.test.ts`
 runs every shape through the voicing analyzer and asserts it reads as its declared symbol,
 so a wrong fret fails the build. Add a shape by adding a line and running `npm test`.
+
+## Content: progressions, devices, forms
+
+- `src/content/progressions.ts`: the catalog. Each entry has `bars` in Roman numerals, the
+  devices it illustrates, genres, a one-line feel, a "why it works" explanation, and examples
+  to listen to.
+- `src/content/devices.ts`: the device library (modal interchange, secondary dominants,
+  chromatic mediants, and so on). Progressions link to devices by id.
+- `src/content/forms.ts`: song forms for the structure view, as sections of bars.
+- `src/content/__tests__/progressions.test.ts` realizes every entry in all twelve keys and
+  checks every device reference, so a typo in a numeral fails the tests.
+
+### Numeral convention
+
+Numerals are always measured against the MAJOR scale of the tonic, in both modes. A minor
+progression is written `i bVII bVI V`, never `i VII VI V`. Case gives triad quality; an explicit
+suffix overrides it (`ii7` is m7, `iiø7` is m7b5, `vii°7` is dim7, `imaj7` is mMaj7). `X/Y`
+applies X to the root of Y (`V7/ii`, `subV7/I`). A bar string holds one or more numerals
+separated by spaces, which share the bar equally (`"ii V"`). See `src/theory/progressions.ts`.

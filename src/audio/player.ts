@@ -123,7 +123,64 @@ class Player {
   }
 
   stopAll() {
+    this.cancelSequence()
     this.inst?.stop()
+  }
+
+  private timers: ReturnType<typeof setTimeout>[] = []
+  private sequenceListeners = new Set<(step: number | null) => void>()
+
+  /** Subscribe to progression playback position (chord index, or null when stopped). */
+  onStep(fn: (step: number | null) => void) {
+    this.sequenceListeners.add(fn)
+    return () => {
+      this.sequenceListeners.delete(fn)
+    }
+  }
+
+  private emitStep(step: number | null) {
+    this.sequenceListeners.forEach((fn) => fn(step))
+  }
+
+  cancelSequence() {
+    this.timers.forEach(clearTimeout)
+    this.timers = []
+    this.emitStep(null)
+  }
+
+  /**
+   * Play a sequence of chords in time. Each step has the midis to strum and a
+   * duration in beats. Timing uses JS timers (good enough for study tempos) so
+   * playback can be cancelled cleanly. Loops when `loop` is true.
+   */
+  async playSteps(steps: { midis: Midi[]; beats: number }[], bpm: number, loop = false) {
+    await this.ensureReady()
+    this.cancelSequence()
+    const beat = 60 / bpm
+    const total = steps.reduce((n, s) => n + s.beats, 0) * beat
+    const schedule = (offset: number) => {
+      let t = offset
+      steps.forEach((s, i) => {
+        const dur = s.beats * beat
+        this.timers.push(setTimeout(() => {
+          this.emitStep(i)
+          const now = this.now()
+          s.midis.forEach((m, k) => this.inst?.start({ note: m, velocity: 80, duration: dur * 0.95, time: now + k * 0.02 }))
+        }, t * 1000))
+        t += dur
+      })
+    }
+    schedule(0)
+    if (loop) {
+      const again = () => {
+        this.timers = []
+        schedule(0)
+        this.timers.push(setTimeout(again, total * 1000))
+      }
+      this.timers.push(setTimeout(again, total * 1000))
+    } else {
+      this.timers.push(setTimeout(() => this.emitStep(null), total * 1000))
+    }
   }
 }
 
