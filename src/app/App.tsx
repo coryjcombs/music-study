@@ -3,11 +3,12 @@ import { INSTRUMENTS, player, type InstrumentId } from '../audio/player'
 import { usePlayerStatus } from '../audio/usePlayer'
 import { useSettings } from '../store/settings'
 import { TUNINGS } from '../theory'
+import { parseHash } from './hashState'
 import { MODULES } from './modules'
 
 function moduleFromHash(): string {
-  const id = location.hash.replace(/^#\/?/, '')
-  return MODULES.some((m) => m.id === id) ? id : MODULES[0].id
+  const { module } = parseHash()
+  return MODULES.some((m) => m.id === module) ? module : MODULES[0].id
 }
 
 export function App() {

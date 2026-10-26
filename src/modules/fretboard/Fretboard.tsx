@@ -1,4 +1,5 @@
 import type { LabeledPosition, LabelMode, Tuning } from '../../theory'
+import { colorFor } from '../../app/components/colors'
 
 export interface FretboardProps {
   tuning: Tuning
@@ -8,22 +9,13 @@ export interface FretboardProps {
   dimOthers: boolean
   leftHanded?: boolean
   onClick?: (pos: LabeledPosition) => void
+  /** Positions drawn with a bright ring, keyed "string-fret" (e.g. the notes of a voicing). */
+  emphasized?: Set<string>
 }
 
 const INLAYS = [3, 5, 7, 9, 12, 15, 17, 19, 21, 24]
 
-/** Color class for a chord-function label. */
-function colorFor(label: string | null, isRoot: boolean): string {
-  if (isRoot || label === 'R' || label === '1') return 'var(--root)'
-  if (!label) return 'var(--other)'
-  if (/3$/.test(label)) return 'var(--third)'
-  if (/5$/.test(label)) return 'var(--fifth)'
-  if (/7$/.test(label)) return 'var(--seventh)'
-  if (/^(b?b?9|#9|11|#11|b13|13|2|#2|b2|4|#4|6|b6|#6)$/.test(label)) return 'var(--ext)'
-  return 'var(--other)'
-}
-
-export function Fretboard({ tuning, grid, labelMode, dimOthers, leftHanded, onClick }: FretboardProps) {
+export function Fretboard({ tuning, grid, labelMode, dimOthers, leftHanded, onClick, emphasized }: FretboardProps) {
   const strings = tuning.strings.length
   const frets = grid[0].length - 1
   const left = 48
@@ -110,7 +102,8 @@ export function Fretboard({ tuning, grid, labelMode, dimOthers, leftHanded, onCl
         {/* notes */}
         {grid.map((row) =>
           row.map((p) => {
-            const faint = dimOthers && !p.inSet
+            const emph = emphasized?.has(`${p.string}-${p.fret}`) ?? false
+            const faint = dimOthers && !p.inSet && !emph
             const text = labelMode === 'names' ? p.name : (p.label ?? p.name)
             const fill = labelMode === 'names' && !p.isRoot ? (p.inSet ? 'var(--panel-2)' : 'var(--other)') : colorFor(p.label, p.isRoot)
             const textFill = labelMode === 'names' && !p.isRoot ? 'var(--text)' : '#111'
@@ -118,10 +111,10 @@ export function Fretboard({ tuning, grid, labelMode, dimOthers, leftHanded, onCl
               <g
                 key={`${p.string}-${p.fret}`}
                 className="fret-dot"
-                opacity={faint ? 0.18 : 1}
+                opacity={faint ? 0.18 : emphasized && !emph ? 0.45 : 1}
                 onClick={() => onClick?.(p)}
               >
-                <circle cx={xOfFret(p.fret)} cy={yOfString(p.string)} r={13} fill={fill} stroke={p.isRoot ? '#fff' : 'rgba(0,0,0,0.35)'} strokeWidth={p.isRoot ? 2 : 1} />
+                <circle cx={xOfFret(p.fret)} cy={yOfString(p.string)} r={13} fill={fill} stroke={emph ? 'var(--accent)' : p.isRoot ? '#fff' : 'rgba(0,0,0,0.35)'} strokeWidth={emph ? 3 : p.isRoot ? 2 : 1} />
                 <text x={xOfFret(p.fret)} y={yOfString(p.string) + 4} textAnchor="middle" fontSize={text.length > 2 ? 9.5 : 11} fill={textFill}>
                   {text}
                 </text>

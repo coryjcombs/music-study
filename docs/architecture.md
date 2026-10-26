@@ -26,6 +26,14 @@ single self-contained HTML file with `npm run build:single` and open `dist/index
 ## Build phases
 
 1. Scaffold, theory engine with tests, audio adapter, fretboard viewer. **(done)**
-2. Voicing analyzer and chord shape library, circle of fifths.
+2. Voicing analyzer, chord shape library, circle of fifths. **(done)**
 3. Progression catalog and device library with playback and transposition, song structure view.
 4. Builder and analyzer, practice log, notebook, ear training.
+
+## Content: chord shapes
+
+`src/content/shapes.ts` holds every library shape for one concrete root (usually C), with
+tags for its family (open, barre, shell, drop 2, drop 3, extended, altered). Shapes without
+open strings are transposed to other roots in the UI. `src/content/__tests__/shapes.test.ts`
+runs every shape through the voicing analyzer and asserts it reads as its declared symbol,
+so a wrong fret fails the build. Add a shape by adding a line and running `npm test`.
