@@ -28,7 +28,7 @@ single self-contained HTML file with `npm run build:single` and open `dist/index
 1. Scaffold, theory engine with tests, audio adapter, fretboard viewer. **(done)**
 2. Voicing analyzer, chord shape library, circle of fifths. **(done)**
 3. Progression catalog and device library with playback and transposition, song structure view. **(done)**
-4. Builder and analyzer, practice log, notebook, ear training.
+4. Builder and analyzer, practice log with key drills, notebook, ear training, backup. **(done)**
 
 ## Content: chord shapes
 
@@ -56,3 +56,19 @@ progression is written `i bVII bVI V`, never `i VII VI V`. Case gives triad qual
 suffix overrides it (`ii7` is m7, `iiø7` is m7b5, `vii°7` is dim7, `imaj7` is mMaj7). `X/Y`
 applies X to the root of Y (`V7/ii`, `subV7/I`). A bar string holds one or more numerals
 separated by spaces, which share the bar equally (`"ii V"`). See `src/theory/progressions.ts`.
+
+## Your own data
+
+Sketches, notes, practice sessions, and drill and ear-training stats live in localStorage
+under the `music-study:` prefix, through `src/store/collection.ts`. The Backup button in the
+top bar downloads all of it as one JSON file; Restore loads such a file back. Reference content
+never lives there. Clearing browser site data erases it, so back up occasionally and consider
+committing backups into this repo if you want git history for your notes.
+
+## Analysis
+
+`src/theory/analysis.ts` is the reverse of `progressions.ts`: chord symbols in, numerals and
+devices out. It ranks keys by how many chords are diatonic (the harmonic-minor V counts in
+minor), then names each non-diatonic chord by the most common reading: secondary dominant or
+leading-tone chord (from what follows it), tritone substitute, borrowed from the parallel key,
+chromatic mediant, or plain chromatic. Order matters for the secondary-dominant rules.

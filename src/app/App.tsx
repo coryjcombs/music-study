@@ -5,6 +5,7 @@ import { useSettings } from '../store/settings'
 import { TUNINGS } from '../theory'
 import { parseHash } from './hashState'
 import { MODULES } from './modules'
+import { Backup } from './components/Backup'
 
 function moduleFromHash(): string {
   const { module } = parseHash()
@@ -59,6 +60,7 @@ export function App() {
               ))}
             </select>
           </label>
+          <Backup />
           <span className={`audio-status status-${status}`} title="Audio loads on your first click">
             {status === 'idle' && 'audio: click to start'}
             {status === 'loading' && 'audio: loading…'}

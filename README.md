@@ -1,8 +1,10 @@
 # Music Study
 
-A personal, browser-only study app for guitar and music theory: fretboard with note
-names and interval functions, chord voicing analysis, circle of fifths, and a growing
-catalog of chord progressions in functional-harmony terms.
+A personal, browser-only study app for guitar and music theory. Screens: fretboard with
+note names and interval functions, chord voicing analyzer, chord shape library, circle of
+fifths, progression catalog and device library in functional-harmony terms, song structure
+view, a builder that analyzes your own progressions, ear training, a practice log with key
+drills, and a notebook. Everything you save can be backed up to a JSON file.
 
 ## Run
 

@@ -1,5 +1,9 @@
 import type { ComponentType } from 'react'
+import { BuilderModule } from '../modules/builder/BuilderModule'
 import { CircleModule } from '../modules/circle/CircleModule'
+import { EarModule } from '../modules/ear/EarModule'
+import { NotebookModule } from '../modules/notebook/NotebookModule'
+import { PracticeModule } from '../modules/practice/PracticeModule'
 import { DevicesModule } from '../modules/devices/DevicesModule'
 import { FretboardModule } from '../modules/fretboard/FretboardModule'
 import { ProgressionsModule } from '../modules/progressions/ProgressionsModule'
@@ -32,4 +36,8 @@ export const MODULES: ModuleDef[] = [
   { id: 'progressions', title: 'Progressions', component: ProgressionsModule },
   { id: 'devices', title: 'Devices', component: DevicesModule },
   { id: 'structure', title: 'Structure', component: StructureModule },
+  { id: 'builder', title: 'Builder', component: BuilderModule },
+  { id: 'ear', title: 'Ear', component: EarModule },
+  { id: 'practice', title: 'Practice', component: PracticeModule },
+  { id: 'notebook', title: 'Notebook', component: NotebookModule },
 ]
