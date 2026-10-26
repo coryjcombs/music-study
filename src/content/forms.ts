@@ -80,4 +80,26 @@ export const SONG_FORMS: SongForm[] = [
       { name: 'Outro', bars: ['i', 'bVI', 'i', 'I'], note: 'Picardy third at the end' },
     ],
   },
+  {
+    id: 'autumn-leaves',
+    name: 'Autumn Leaves (32-bar AABC)',
+    description: 'The standard everyone learns first: two ii–V–I pairs per phrase, major then relative minor, and a full circle-of-fifths run. Written here in G minor, as on most jazz charts.',
+    mode: 'minor', tonic: 'G', bpm: 130,
+    sections: [
+      { name: 'A', bars: ['iv7', 'bVII7', 'bIIImaj7', 'bVImaj7', 'iiø7', 'V7', 'i7', 'i7'], note: 'ii–V–I in the relative major (Cm7 F7 Bbmaj7), then ii–V–i in the minor' },
+      { name: 'A', bars: ['iv7', 'bVII7', 'bIIImaj7', 'bVImaj7', 'iiø7', 'V7', 'i7', 'i7'] },
+      { name: 'B', bars: ['iiø7', 'V7', 'i7', 'i7', 'iv7', 'bVII7', 'bIIImaj7', 'bVImaj7'], note: 'the two halves of A swapped: minor first, then major' },
+      { name: 'C', bars: ['iiø7', 'V7', 'i7 IV7', 'bvii7 bIII7', 'bVImaj7', 'iiø7 V7', 'i7', 'i7'], note: 'the tag: Gm7 C7 | Fm7 Bb7 | Ebmaj7 is a chain of ii–Vs through the flat side before the final ii–V–i' },
+    ],
+  },
+  {
+    id: 'blue-bossa',
+    name: 'Blue Bossa (16 bars)',
+    description: "Kenny Dorham's bossa in C minor: a minor ii–V–i twice, and in the middle a ii–V–I a half step up, to Db major. The modulation is the lesson.",
+    mode: 'minor', tonic: 'C', bpm: 150,
+    sections: [
+      { name: 'A', bars: ['i7', 'i7', 'iv7', 'iv7', 'iiø7', 'V7', 'i7', 'i7'], note: 'home: i, iv, then the minor ii–V–i' },
+      { name: 'B', bars: ['biii7', 'bVI7', 'bIImaj7', 'bIImaj7', 'iiø7', 'V7', 'i7', 'iiø7 V7'], note: 'Ebm7 Ab7 Dbmaj7 is a ii–V–I in Db, a half step above the tonic; then home via the minor ii–V' },
+    ],
+  },
 ]

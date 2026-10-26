@@ -161,6 +161,25 @@ export const DEVICES: Device[] = [
       'A pedal is a note, usually the tonic or dominant, held in the bass while the chords above it change. The held note makes even distant chords feel tethered, and the moment the pedal releases is a strong structural event. On guitar, open-string drones (an open D under moving shapes) are the easiest way to hear it.',
     ],
   },
+  {
+    id: 'jpop-harmony',
+    name: 'J-pop harmony',
+    summary: 'Loops that start on IV, lean on iii and vi, add secondary dominants, and modulate up for the last chorus.',
+    body: [
+      "Japanese pop and anime music grew out of the same jazz and Western pop vocabulary as everything else, but it settled on a few habits that give it a recognisable sound. First, loops tend to start on IV rather than I, so the tonic is withheld (the royal road IV–V–iii–vi is the model). Second, the minor chords iii and vi do a lot of work, and iii is often replaced by III7, the secondary dominant of vi, which adds a chromatic leading tone. Third, writers happily use dominant 7ths and ninths on almost any degree, inherited from jazz and city pop. Fourth, the final chorus commonly modulates up a half step or whole step, the so-called truck driver's modulation.",
+      'The result is music that is harmonically busier than Western pop built on the same four chords, with a constant sense of reaching that suits big melodic choruses. The same devices appear in Western music; the difference is how routinely they are combined.',
+    ],
+    tips: ['Take I–V–vi–IV, rotate it to start on IV, and swap V–vi for V–iii–vi. You have just written the royal road.', 'Replace any iii with III7 and hear how much harder the next vi arrives.'],
+  },
+  {
+    id: 'modulation',
+    name: 'Modulation',
+    summary: 'Changing key mid-song: by pivot chord, by direct shift, or up a step for the final chorus.',
+    body: [
+      "A modulation establishes a new tonic. The classical way is through a pivot chord that belongs to both keys (the Circle tab shows these: hover a chord to see every key it lives in). Pop and J-pop often skip the pivot and simply jump up a half step or whole step for the last chorus, which reads as a surge of energy. Jazz standards modulate constantly through ii–V–I in new keys; Blue Bossa's ii–V–I a half step above home is a clean example.",
+    ],
+    tips: ['Find the chord in your progression that is diatonic to both the old key and the new one; that is your pivot.'],
+  },
 ]
 
 export function deviceById(id: string): Device | undefined {
