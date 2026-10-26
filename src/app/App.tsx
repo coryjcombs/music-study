@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { INSTRUMENTS, player, type InstrumentId } from '../audio/player'
 import { usePlayerStatus } from '../audio/usePlayer'
 import { useSettings } from '../store/settings'
@@ -23,11 +23,21 @@ export function App() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
+  // Every module stays mounted for the session, so each tab keeps its state when you
+  // switch away and back. Only the active one is shown; scroll position is kept per tab.
+  const scrollMemory = useRef<Record<string, number>>({})
+  const previous = useRef(active)
+  useLayoutEffect(() => {
+    if (previous.current !== active) {
+      scrollMemory.current[previous.current] = window.scrollY
+      previous.current = active
+      window.scrollTo(0, scrollMemory.current[active] ?? 0)
+    }
+  }, [active])
+
   useEffect(() => {
     void player.setInstrument(settings.instrument)
   }, [settings.instrument])
-
-  const Active = MODULES.find((m) => m.id === active)!.component
 
   return (
     <div className="app">
@@ -70,7 +80,11 @@ export function App() {
         </div>
       </header>
       <main className="content">
-        <Active settings={settings} updateSettings={updateSettings} />
+        {MODULES.map((m) => (
+          <div key={m.id} hidden={m.id !== active}>
+            <m.component settings={settings} updateSettings={updateSettings} />
+          </div>
+        ))}
       </main>
     </div>
   )

@@ -1,6 +1,7 @@
 import { player } from '../../audio/player'
 import { closeVoicing, isDiatonic, type RealizedChord } from '../../theory'
 import { navigate } from '../hashState'
+import { ChordHover } from './ChordHover'
 
 export interface BarGridProps {
   bars: RealizedChord[][]
@@ -24,7 +25,7 @@ export function BarGrid({ bars, mode, activeStep = null, stepOffset = 0, barsPer
             const idx = step++
             const borrowed = !isDiatonic(c.numeral, mode)
             return (
-              <div key={ci} className={`chord-cell ${idx === activeStep ? 'active' : ''} ${borrowed ? 'borrowed' : ''}`}>
+              <ChordHover key={ci} as="div" symbol={c.symbol} className={`chord-cell ${idx === activeStep ? 'active' : ''} ${borrowed ? 'borrowed' : ''}`}>
                 <button className="chord-cell-btn" onClick={() => void player.strum(closeVoicing(c.symbol, 3), 0.03, 1.5)} title={borrowed ? 'outside the diatonic set' : undefined}>
                   <span className="numeral">{c.numeral}</span>
                   <span className="symbol">{c.symbol}</span>
@@ -32,7 +33,7 @@ export function BarGrid({ bars, mode, activeStep = null, stepOffset = 0, barsPer
                 {!compact && (
                   <a className="tiny-link" href="#" onClick={(e) => { e.preventDefault(); navigate('shapes', { root: c.root, suffix: c.suffix }) }}>shapes</a>
                 )}
-              </div>
+              </ChordHover>
             )
           })}
         </div>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { player } from '../../audio/player'
+import { ChordHover } from '../../app/components/ChordHover'
 import {
   CIRCLE_ALT, CIRCLE_MAJOR, CIRCLE_MINOR, closeVoicing, keyInfo, keysContaining, scaleRun, type Mode,
 } from '../../theory'
@@ -121,12 +122,12 @@ export function CircleModule() {
           <tbody>
             <tr>
               {key.triads.map((c) => (
-                <td key={c}><button className="chord-btn" onClick={() => playChord(c)} onMouseEnter={() => setHoverChord(c)} onMouseLeave={() => setHoverChord(null)}>{c}</button></td>
+                <td key={c}><ChordHover symbol={c} className="chord-btn-wrap"><button className="chord-btn" onClick={() => playChord(c)} onMouseEnter={() => setHoverChord(c)} onMouseLeave={() => setHoverChord(null)}>{c}</button></ChordHover></td>
               ))}
             </tr>
             <tr>
               {key.chords.map((c) => (
-                <td key={c}><button className="chord-btn" onClick={() => playChord(c)} onMouseEnter={() => setHoverChord(c)} onMouseLeave={() => setHoverChord(null)}>{c}</button></td>
+                <td key={c}><ChordHover symbol={c} className="chord-btn-wrap"><button className="chord-btn" onClick={() => playChord(c)} onMouseEnter={() => setHoverChord(c)} onMouseLeave={() => setHoverChord(null)}>{c}</button></ChordHover></td>
               ))}
             </tr>
           </tbody>
@@ -140,7 +141,7 @@ export function CircleModule() {
               <tbody>
                 <tr>
                   {key.harmonicChords.map((c) => (
-                    <td key={c}><button className="chord-btn" onClick={() => playChord(c)} onMouseEnter={() => setHoverChord(c)} onMouseLeave={() => setHoverChord(null)}>{c}</button></td>
+                    <td key={c}><ChordHover symbol={c} className="chord-btn-wrap"><button className="chord-btn" onClick={() => playChord(c)} onMouseEnter={() => setHoverChord(c)} onMouseLeave={() => setHoverChord(null)}>{c}</button></ChordHover></td>
                   ))}
                 </tr>
               </tbody>
