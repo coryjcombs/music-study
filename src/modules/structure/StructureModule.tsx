@@ -37,8 +37,10 @@ const colorFor = (name: string) => SECTION_COLORS[name] ?? 'var(--other)'
 
 export function StructureModule() {
   const [formId, setFormId] = useState(SONG_FORMS[0].id)
-  const [tonic, setTonic] = useState<string | null>(null)
-  const [bpm, setBpm] = useState<number | null>(null)
+  // Key and tempo are remembered per form for the session.
+  const [choices, setChoices] = useState<Record<string, { tonic?: string; bpm?: number }>>({})
+  const remember = (id: string, patch: { tonic?: string; bpm?: number }) =>
+    setChoices((c) => ({ ...c, [id]: { ...c[id], ...patch } }))
   const [open, setOpen] = useState<number | null>(0)
   const transport = useTransport()
   const step = transport.step
@@ -46,8 +48,8 @@ export function StructureModule() {
   useEffect(() => () => player.cancelSequence(), [])
 
   const form = SONG_FORMS.find((f) => f.id === formId) ?? SONG_FORMS[0]
-  const key = tonic ?? form.tonic
-  const tempo = bpm ?? form.bpm
+  const key = choices[form.id]?.tonic ?? form.tonic
+  const tempo = choices[form.id]?.bpm ?? form.bpm
 
   const timeline = useMemo(() => buildTimeline(form, key), [form, key])
 
@@ -67,19 +69,19 @@ export function StructureModule() {
       <div className="controls">
         <label>
           Form
-          <select value={form.id} onChange={(e) => { player.cancelSequence(); setFormId(e.target.value); setTonic(null); setBpm(null); setOpen(0) }}>
+          <select value={form.id} onChange={(e) => { player.cancelSequence(); setFormId(e.target.value); setOpen(0) }}>
             {SONG_FORMS.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
           </select>
         </label>
         <label>
           Key
-          <select value={key} onChange={(e) => setTonic(e.target.value)}>
+          <select value={key} onChange={(e) => remember(form.id, { tonic: e.target.value })}>
             {tonics.map((t) => <option key={t} value={t}>{t} {form.mode}</option>)}
           </select>
         </label>
         <label>
           Tempo
-          <input type="number" min={40} max={240} value={tempo} onChange={(e) => setBpm(Number(e.target.value) || 100)} style={{ width: 70 }} />
+          <input type="number" min={40} max={240} value={tempo} onChange={(e) => remember(form.id, { bpm: Number(e.target.value) || 100 })} style={{ width: 70 }} />
         </label>
         <div className="seg-group">
           <button className="seg primary" onClick={() => play(open ?? 0)}>{open != null && open > 0 ? `Play from ${timeline[open]?.section.name}` : 'Play all'}</button>

@@ -13,8 +13,11 @@ export function ProgressionsModule() {
   const [device, setDevice] = useState('any')
   const [genre, setGenre] = useState('any')
   const [mode, setMode] = useState<'any' | 'major' | 'minor'>('any')
-  const [tonic, setTonic] = useState<string | null>(null)
-  const [bpm, setBpm] = useState<number | null>(null)
+  // Key and tempo are remembered per progression for the session, so two entries can be
+  // compared in their own keys without re-selecting.
+  const [choices, setChoices] = useState<Record<string, { tonic?: string; bpm?: number }>>({})
+  const remember = (id: string, patch: { tonic?: string; bpm?: number }) =>
+    setChoices((c) => ({ ...c, [id]: { ...c[id], ...patch } }))
   const [loop, setLoop] = useState(true)
   const transport = useTransport()
   const step = transport.step
@@ -36,8 +39,8 @@ export function ProgressionsModule() {
     (mode === 'any' || p.mode === mode)), [device, genre, mode])
 
   const entry = PROGRESSIONS.find((p) => p.id === selectedId) ?? PROGRESSIONS[0]
-  const key = tonic ?? entry.tonic ?? 'C'
-  const tempo = bpm ?? entry.bpm ?? 96
+  const key = choices[entry.id]?.tonic ?? entry.tonic ?? 'C'
+  const tempo = choices[entry.id]?.bpm ?? entry.bpm ?? 96
   const bars = useMemo(() => realizeBars(entry.bars, key), [entry, key])
   const info = useMemo(() => keyInfo(key, entry.mode), [key, entry.mode])
 
@@ -49,8 +52,6 @@ export function ProgressionsModule() {
   const select = (id: string) => {
     player.cancelSequence()
     setSelectedId(id)
-    setTonic(null)
-    setBpm(null)
   }
 
   const tonics = entry.mode === 'major' ? CIRCLE_MAJOR : CIRCLE_MINOR
@@ -100,13 +101,13 @@ export function ProgressionsModule() {
         <div className="controls">
           <label>
             Key
-            <select value={key} onChange={(e) => setTonic(e.target.value)}>
+            <select value={key} onChange={(e) => remember(entry.id, { tonic: e.target.value })}>
               {tonics.map((t) => <option key={t} value={t}>{t} {entry.mode}</option>)}
             </select>
           </label>
           <label>
             Tempo
-            <input type="number" min={40} max={240} value={tempo} onChange={(e) => setBpm(Number(e.target.value) || 96)} style={{ width: 70 }} />
+            <input type="number" min={40} max={240} value={tempo} onChange={(e) => remember(entry.id, { bpm: Number(e.target.value) || 96 })} style={{ width: 70 }} />
           </label>
           <label>
             Loop
