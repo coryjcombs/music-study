@@ -106,7 +106,7 @@ function DrillPanel() {
     return Object.fromEntries(list.map((s) => [s.id, s]))
   })
   const [cats, setCats] = useState<Set<Drill['category']>>(new Set(['signature', 'key-from-signature', 'relative', 'diatonic']))
-  const [current, setCurrent] = useState<Drill | null>(() => nextDrill(drills, {}, new Set(['signature', 'key-from-signature', 'relative', 'diatonic'])))
+  const [current, setCurrent] = useState<Drill | null>(() => nextDrill(drills, stats, cats))
   const [picked, setPicked] = useState<string | null>(null)
   const [session, setSession] = useState({ right: 0, wrong: 0 })
 
@@ -136,13 +136,21 @@ function DrillPanel() {
     if (s.size) setCats(s)
   }
 
-  const known = Object.values(stats).filter((s) => s.box >= 3).length
+  const all = Object.values(stats)
+  const known = all.filter((s) => s.box >= 3).length
+  const lifetime = all.reduce((n, s) => n + s.correct + s.wrong, 0)
+  const lifetimeRight = all.reduce((n, s) => n + s.correct, 0)
   const labels: Record<Drill['category'], string> = { signature: 'Signatures', 'key-from-signature': 'Key from signature', relative: 'Relative keys', diatonic: 'Diatonic chords' }
 
   return (
     <div className="panel">
       <h3 className="section" style={{ marginTop: 0 }}>Key drills</h3>
-      <p className="muted" style={{ marginTop: 0 }}>Quick recall of signatures, relative keys and diatonic chords. Questions you miss come back sooner. {known} of {drills.length} well known.</p>
+      <p className="muted" style={{ marginTop: 0 }}>Quick recall of signatures, relative keys and diatonic chords. Questions you miss come back sooner.</p>
+      <div className="stat-row">
+        <div className="stat"><b>{lifetime}</b><span>answered all time</span></div>
+        <div className="stat"><b>{lifetime ? Math.round((100 * lifetimeRight) / lifetime) : 0}%</b><span>correct all time</span></div>
+        <div className="stat"><b>{known}</b><span>of {drills.length} well known</span></div>
+      </div>
       <div className="controls">
         <label>
           Ask about

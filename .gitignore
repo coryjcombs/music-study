@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local backups written by the app (choose this folder in Backup > Restore)
+backups/
