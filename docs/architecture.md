@@ -53,7 +53,7 @@ so a wrong fret fails the build. Add a shape by adding a line and running `npm t
 
 Numerals are always measured against the MAJOR scale of the tonic, in both modes. A minor
 progression is written `i bVII bVI V`, never `i VII VI V`. Case gives triad quality; an explicit
-suffix overrides it (`ii7` is m7, `iiø7` is m7b5, `vii°7` is dim7, `imaj7` is mMaj7). `X/Y`
+suffix overrides it (`ii7` is m7, `iiÃ¸7` is m7b5, `viiÂ°7` is dim7, `imaj7` is mMaj7). `X/Y`
 applies X to the root of Y (`V7/ii`, `subV7/I`). A bar string holds one or more numerals
 separated by spaces, which share the bar equally (`"ii V"`). See `src/theory/progressions.ts`.
 
@@ -61,9 +61,18 @@ separated by spaces, which share the bar equally (`"ii V"`). See `src/theory/pro
 
 Sketches, notes, practice sessions, and drill and ear-training stats live in localStorage
 under the `music-study:` prefix, through `src/store/collection.ts`. The Backup button in the
-top bar downloads all of it as one JSON file; Restore loads such a file back. Reference content
-never lives there. Clearing browser site data erases it, so back up occasionally and consider
-committing backups into this repo if you want git history for your notes.
+top bar saves all of it as one JSON file; Restore loads such a file back and reloads.
+
+In Chrome and Edge you can choose a backup folder once (Restore > Choose folderâ€¦). The folder
+handle is remembered in IndexedDB (`src/store/backupDir.ts`); the browser may ask you to
+re-allow access once per session. Backup then writes timestamped files straight into that
+folder and Restore lists them newest first. Without a folder, or in browsers without the
+File System Access API, Backup downloads the file and Restore opens a file picker. The repo's
+`backups/` folder is gitignored and a sensible choice; remove the ignore line if you want git
+history for your notes.
+
+Reference content never lives in localStorage. Clearing browser site data erases your data, and
+`file://` and `localhost` are different origins with separate data, so back up before switching.
 
 ## Analysis
 
