@@ -1,8 +1,8 @@
 name: Deploy to GitHub Pages
 
+# Manual only: GitHub Pages is not offered for private repos on the free plan.
+# Run it by hand if the repo ever goes public or the plan changes.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
