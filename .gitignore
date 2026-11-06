@@ -25,3 +25,4 @@ dist-ssr
 
 # Local backups written by the app (choose this folder in Backup > Restore)
 backups/
+dev-dist

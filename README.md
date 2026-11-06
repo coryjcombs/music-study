@@ -23,6 +23,17 @@ Other commands:
 | `npm run build` | Production build to `dist/` |
 | `npm run build:single` | Single self-contained `dist/index.html` you can open by double-click |
 
+## Install as an app (PWA)
+
+Pushing to `main` builds the app and publishes it to GitHub Pages through
+`.github/workflows/pages.yml`. Once in the repo settings under Pages the source is set to
+"GitHub Actions", the site is at `https://coryjcombs.github.io/music-study/`. Open that on the
+phone in Edge or Chrome and choose "Add to phone" or "Install app" from the browser menu: it
+gets a home-screen icon, opens full screen, works offline, and keeps any instrument samples
+you have already heard. New pushes reach the installed app on its next open. The URL is
+unlisted but public, like any GitHub Pages site; it holds no personal data, which stays in
+each browser.
+
 ## On a phone
 
 The same build works on a phone: below about 720px wide the tabs move to a bottom bar,

@@ -66,6 +66,14 @@ when structure changes, such as four bars per row in the whole-form view or scro
 chosen catalog entry into view. Keep new modules phone-neutral: grids with `minmax(0, 1fr)`,
 flex-wrap controls, and no fixed widths wider than about 380px.
 
+## PWA
+
+`vite-plugin-pwa` (in `vite.config.ts`) writes the manifest, icons from `public/icons`, and a
+Workbox service worker that precaches the build and caches soundfont samples on first use.
+`src/app/pwa.ts` registers it only in production over http(s); the single-file build aliases
+the register module to a stub, since `file://` cannot run a worker. Deployment is the Pages
+workflow; the dev server never registers a worker, so nothing caches during development.
+
 ## Your own data
 
 Sketches, notes, practice sessions, and drill and ear-training stats live in localStorage
