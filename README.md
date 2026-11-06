@@ -30,9 +30,7 @@ Pushing to `main` builds the app and publishes it to GitHub Pages through
 "GitHub Actions", the site is at `https://coryjcombs.github.io/music-study/`. Open that on the
 phone in Edge or Chrome and choose "Add to phone" or "Install app" from the browser menu: it
 gets a home-screen icon, opens full screen, works offline, and keeps any instrument samples
-you have already heard. New pushes reach the installed app on its next open. The URL is
-unlisted but public, like any GitHub Pages site; it holds no personal data, which stays in
-each browser.
+you have already heard. New pushes reach the installed app on its next open. The repo and site are public; your own data never leaves the browser it was entered in.
 
 ## On a phone
 
