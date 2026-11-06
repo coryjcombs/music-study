@@ -6,6 +6,7 @@ import { TUNINGS } from '../theory'
 import { parseHash } from './hashState'
 import { MODULES } from './modules'
 import { Backup } from './components/Backup'
+import { isPhone } from './phone'
 
 function moduleFromHash(): string {
   const { module } = parseHash()
@@ -16,6 +17,8 @@ export function App() {
   const [settings, updateSettings] = useSettings()
   const [active, setActive] = useState(moduleFromHash)
   const status = usePlayerStatus()
+  const [showSettings, setShowSettings] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const onHash = () => setActive(moduleFromHash())
@@ -33,6 +36,8 @@ export function App() {
       previous.current = active
       window.scrollTo(0, scrollMemory.current[active] ?? 0)
     }
+    // The phone nav scrolls sideways; keep the active tab visible.
+    if (isPhone()) navRef.current?.querySelector('a.active')?.scrollIntoView({ inline: 'center', block: 'nearest' })
   }, [active])
 
   useEffect(() => {
@@ -43,14 +48,15 @@ export function App() {
     <div className="app">
       <header className="topbar">
         <h1 className="brand">Music Study</h1>
-        <nav className="nav">
+        <button className={`settings-toggle ${showSettings ? 'on' : ''}`} onClick={() => setShowSettings((s) => !s)} title="Tuning, sound, backup" aria-label="Settings">⚙</button>
+        <nav className="nav" ref={navRef}>
           {MODULES.map((m) => (
             <a key={m.id} href={`#/${m.id}`} className={m.id === active ? 'active' : ''}>
               {m.title}
             </a>
           ))}
         </nav>
-        <div className="global-controls">
+        <div className={`global-controls ${showSettings ? 'open' : ''}`}>
           <label>
             Tuning
             <select value={settings.tuningId} onChange={(e) => updateSettings({ tuningId: e.target.value })}>

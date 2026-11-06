@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { navigate, parseHash } from '../../app/hashState'
+import { revealOnPhone } from '../../app/phone'
 import { DEVICES } from '../../content/devices'
 import { PROGRESSIONS } from '../../content/progressions'
 
@@ -15,6 +16,7 @@ export function DevicesModule() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
+  const detail = useRef<HTMLElement>(null)
   const device = DEVICES.find((d) => d.id === selectedId) ?? DEVICES[0]
   const uses = PROGRESSIONS.filter((p) => p.devices.includes(device.id))
 
@@ -23,14 +25,14 @@ export function DevicesModule() {
       <aside className="panel catalog-list">
         <ul className="entry-list">
           {DEVICES.map((d) => (
-            <li key={d.id} className={d.id === device.id ? 'active' : ''} onClick={() => setSelectedId(d.id)}>
+            <li key={d.id} className={d.id === device.id ? 'active' : ''} onClick={() => { setSelectedId(d.id); revealOnPhone(detail.current) }}>
               <div className="entry-name">{d.name}</div>
               <div className="entry-sub">{d.summary}</div>
             </li>
           ))}
         </ul>
       </aside>
-      <section className="panel">
+      <section className="panel" ref={detail}>
         <h2 className="chord-title">{device.name}</h2>
         <p className="muted" style={{ marginTop: 4 }}>{device.summary}</p>
         {device.body.map((p, i) => <p key={i} className="prose">{p}</p>)}

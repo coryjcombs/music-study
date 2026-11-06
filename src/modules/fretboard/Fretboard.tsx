@@ -38,6 +38,7 @@ export function Fretboard({ tuning, grid, labelMode, dimOthers, leftHanded, onCl
       <svg
         className="fretboard"
         viewBox={`0 0 ${width} ${height}`}
+        style={{ minWidth: Math.round(width * 0.85) }}
       >
         {/* board */}
         <rect x={Math.min(boardX, boardX2)} y={top - stringH / 2} width={nutW + frets * fretW} height={(strings - 1) * stringH + stringH} rx={4} fill="var(--wood)" />

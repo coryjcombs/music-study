@@ -23,4 +23,15 @@ Other commands:
 | `npm run build` | Production build to `dist/` |
 | `npm run build:single` | Single self-contained `dist/index.html` you can open by double-click |
 
+## On a phone
+
+The same build works on a phone: below about 720px wide the tabs move to a bottom bar,
+the gear at the top right holds tuning, sound and backup, and panels stack. Build the
+single file, copy `dist/index.html` to the phone (USB, Drive, or email it to yourself)
+and open it from the Files app with Edge or Chrome. Keep opening it from the same place,
+since the browser stores your data per file location. The phone's data is separate from
+the PC's: Backup on one and Restore on the other to move it. Android browsers cannot
+write to a chosen folder, so Backup downloads the file and Restore opens a file picker.
+Instrument samples still load from the internet on first use.
+
 See [docs/architecture.md](docs/architecture.md) for the layout and conventions.

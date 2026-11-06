@@ -57,6 +57,15 @@ suffix overrides it (`ii7` is m7, `iiø7` is m7b5, `vii°7` is dim7, `imaj7` is 
 applies X to the root of Y (`V7/ii`, `subV7/I`). A bar string holds one or more numerals
 separated by spaces, which share the bar equally (`"ii V"`). See `src/theory/progressions.ts`.
 
+## Phone layout
+
+One build serves both sizes. `src/app/phone.ts` holds the media query (720px); the
+stylesheet's phone block restyles the shell (bottom tab bar, settings behind a gear,
+stacked panels, thumb-sized controls) and a few components ask `isPhone()` or `usePhone()`
+when structure changes, such as four bars per row in the whole-form view or scrolling a
+chosen catalog entry into view. Keep new modules phone-neutral: grids with `minmax(0, 1fr)`,
+flex-wrap controls, and no fixed widths wider than about 380px.
+
 ## Your own data
 
 Sketches, notes, practice sessions, and drill and ear-training stats live in localStorage

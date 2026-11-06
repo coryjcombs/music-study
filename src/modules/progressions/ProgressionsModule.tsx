@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { player } from '../../audio/player'
 import { useTransport } from '../../audio/useStep'
 import { BarGrid } from '../../app/components/BarGrid'
 import { navigate, parseHash } from '../../app/hashState'
+import { revealOnPhone } from '../../app/phone'
 import { DEVICES, deviceById } from '../../content/devices'
 import { GENRES, PROGRESSIONS } from '../../content/progressions'
 import { CIRCLE_MAJOR, CIRCLE_MINOR, closeVoicing, keyInfo, realizeBars } from '../../theory'
@@ -49,9 +50,11 @@ export function ProgressionsModule() {
     void player.playSteps(steps, tempo, loop)
   }
 
+  const detail = useRef<HTMLElement>(null)
   const select = (id: string) => {
     player.cancelSequence()
     setSelectedId(id)
+    revealOnPhone(detail.current)
   }
 
   const tonics = entry.mode === 'major' ? CIRCLE_MAJOR : CIRCLE_MINOR
@@ -94,7 +97,7 @@ export function ProgressionsModule() {
         </ul>
       </aside>
 
-      <section className="panel">
+      <section className="panel" ref={detail}>
         <h2 className="chord-title">{entry.name}</h2>
         <p className="muted" style={{ marginTop: 4 }}>{entry.feel}</p>
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { player } from '../../audio/player'
+import { usePhone } from '../../app/phone'
 import { useTransport } from '../../audio/useStep'
 import { BarGrid } from '../../app/components/BarGrid'
 import { SONG_FORMS, type FormSection, type SongForm } from '../../content/forms'
@@ -36,6 +37,7 @@ const SECTION_COLORS: Record<string, string> = {
 const colorFor = (name: string) => SECTION_COLORS[name] ?? 'var(--other)'
 
 export function StructureModule() {
+  const phone = usePhone()
   const [formId, setFormId] = useState(SONG_FORMS[0].id)
   // Key and tempo are remembered per form for the session.
   const [choices, setChoices] = useState<Record<string, { tonic?: string; bpm?: number }>>({})
@@ -132,7 +134,7 @@ export function StructureModule() {
         {timeline.map((t, i) => (
           <div key={i} className="form-row">
             <div className="form-row-label" style={{ borderColor: colorFor(t.section.name) }}>{t.section.name}</div>
-            <BarGrid bars={t.bars} mode={form.mode} activeStep={step} stepOffset={t.offset} barsPerRow={Math.min(8, t.bars.length)} compact />
+            <BarGrid bars={t.bars} mode={form.mode} activeStep={step} stepOffset={t.offset} barsPerRow={Math.min(phone ? 4 : 8, t.bars.length)} compact />
           </div>
         ))}
       </div>

@@ -36,6 +36,7 @@ body { background: var(--bg); }
 }
 .brand { font-size: 17px; margin: 0; letter-spacing: 0.02em; color: var(--accent); }
 .nav { display: flex; gap: 4px; }
+.settings-toggle { display: none; }
 .nav a {
   color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-weight: 500;
 }
@@ -69,7 +70,7 @@ button.seg.on { background: var(--accent); color: var(--accent-text); border-col
 .hint { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
 
 .fretboard-wrap { overflow-x: auto; }
-.fretboard { display: block; width: 100%; min-width: 900px; height: auto; user-select: none; }
+.fretboard { display: block; width: 100%; height: auto; user-select: none; }
 .fret-dot { cursor: pointer; }
 .fret-dot text { pointer-events: none; font-weight: 600; }
 .fret-dot:hover circle { stroke: var(--accent); stroke-width: 2.5; }
@@ -220,3 +221,56 @@ textarea { font: inherit; color: var(--text); background: var(--panel-2); border
 .hover-meta { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; }
 .hover-empty { display: flex; flex-direction: column; gap: 4px; font-size: 13px; max-width: 220px; }
 .chord-btn-wrap { width: 100%; }
+
+/* ---- phone layout (same build; the shell and spacing change, nothing else) ---- */
+@media (max-width: 720px) {
+  :root { font-size: 15px; }
+  .topbar { gap: 10px; padding: 8px 12px; position: sticky; top: 0; z-index: 40; }
+  .brand { font-size: 16px; }
+  .settings-toggle { display: inline-flex; margin-left: auto; font-size: 18px; line-height: 1; padding: 4px 9px; }
+  .settings-toggle.on { border-color: var(--accent); color: var(--accent); }
+  .global-controls { display: none; margin-left: 0; width: 100%; flex-wrap: wrap; gap: 10px 14px; padding-top: 6px; border-top: 1px solid var(--border); }
+  .global-controls.open { display: flex; }
+
+  /* bottom tab bar, two rows so every tab is visible */
+  .nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; order: 10;
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 2px;
+    background: var(--panel); border-top: 1px solid var(--border);
+    padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+  }
+  .nav a { padding: 8px 2px; font-size: 10.5px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-radius: 6px; }
+  .content { padding: 12px 10px calc(92px + env(safe-area-inset-bottom)); }
+
+  /* thumb-sized controls */
+  select, input[type='text'], input[type='number'], input[type='date'], button { min-height: 38px; }
+  button.small { min-height: 30px; }
+  .chord-cell-btn { min-height: 0; }
+  .fret-dot circle { r: 13; }
+  .panel { padding: 12px; overflow-x: auto; }
+  .controls { gap: 10px 14px; }
+  .entry-list { max-height: 32vh; }
+  .entry-list li { padding: 10px 10px; }
+  .catalog-list { position: relative; }
+
+  /* the fretboard keeps a readable fret width and scrolls sideways */
+
+  /* charts */
+  .bar { padding: 4px 2px; min-height: 56px; gap: 2px; }
+  .chord-cell-btn .numeral { font-size: 13px; }
+  .chord-cell-btn .symbol { font-size: 11px; }
+  .form-row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .form-row-label { margin-top: 10px; }
+  .timeline { height: 50px; }
+  .stat-row { gap: 8px; }
+  .stat { flex: 1; min-width: 0; padding: 8px 6px; }
+  .stat b { font-size: 20px; }
+  .chord-title { font-size: 22px; }
+  .drill-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .chord-btn { min-width: 56px; padding: 8px 2px; }
+  .analysis { gap: 12px; }
+
+  /* backup panel anchors to the screen, not the button */
+  .backup-panel { position: fixed; left: 10px; right: 10px; top: 110px; width: auto; max-width: none; }
+}
